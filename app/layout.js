@@ -13,7 +13,7 @@ const playfair = Playfair_Display({
 });
 
 export const metadata = {
-  title: "Hilaireofficial | Premium Beauty Store",
+  title: "Hans Jwellers | Premium Beauty Store",
   description: "Luxury skincare & beauty essentials",
 };
 
