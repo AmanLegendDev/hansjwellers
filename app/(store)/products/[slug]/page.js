@@ -1,41 +1,49 @@
 "use client";
+
 export const dynamic = "force-dynamic";
-import { useEffect, useState } from "react";
+
+import { useEffect,useState } from "react";
 import { useParams } from "next/navigation";
 import { useCartStore } from "@/store/cartStore";
 import Navbar from "@/components/layout/Navbar";
 import ProductCard from "@/components/store/ProductCard";
 
-export default function ProductPage() {
+export default function ProductPage(){
 
 const { slug } = useParams();
 
-const addToCart = useCartStore(
-state => state.addToCart
-);
+const formatPrice = (price) => {
+return new Intl.NumberFormat("en-IN").format(price);
+};
 
-const [product, setProduct] = useState(null);
+const addToCart =
+useCartStore(state=>state.addToCart);
 
-const [selectedImage, setSelectedImage] =
+const [product,setProduct]=useState(null);
+
+const [selectedImage,setSelectedImage]=
 useState(null);
 
-const [relatedProducts, setRelatedProducts] =
+const [relatedProducts,setRelatedProducts]=
 useState([]);
 
-const [showPopup, setShowPopup] =
+const [showPopup,setShowPopup]=
 useState(false);
 
 
+/*
+LOAD PRODUCT
+*/
 
-/* LOAD PRODUCT */
+useEffect(()=>{
 
-useEffect(() => {
-
-fetch(`/api/store/product/${slug}`, {
-  cache: "no-store"
+fetch(`/api/store/product/${slug}`,{
+cache:"no-store"
 })
-.then(res => res.json())
-.then(data => {
+
+.then(res=>res.json())
+
+.then(data=>{
 
 setProduct(data);
 
@@ -45,28 +53,32 @@ data.images?.[0]
 
 });
 
-}, [slug]);
+},[slug]);
 
 
+/*
+LOAD RELATED PRODUCTS
+*/
 
-/* LOAD RELATED PRODUCTS */
+useEffect(()=>{
 
-useEffect(() => {
+if(!product?.category?._id)return;
 
-if (!product?.category?._id) return;
+fetch("/api/store/product")
 
-fetch("/api/store/products", {
-  cache: "no-store"
-})
-.then(res => res.json())
-.then(data => {
+.then(res=>res.json())
 
-const filtered =
-data.filter(p =>
+.then(data=>{
 
-p.category?._id ===
-product.category._id &&
-p.slug !== product.slug
+const filtered=data.filter(p=>
+
+p.category?._id===
+
+product.category._id
+
+&&
+
+p.slug!==product.slug
 
 );
 
@@ -74,11 +86,18 @@ setRelatedProducts(filtered);
 
 });
 
-}, [product]);
+},[product]);
 
 
+/*
+ADD TO CART
+*/
 
-/* ADD TO CART */
+const handleAddToCart=()=>{
+
+addToCart(product);
+
+setShowPopup(true);
 
 const handleAddToCart = () => {
 
@@ -86,46 +105,76 @@ addToCart(product);
 
 setShowPopup(true);
 
-setTimeout(() => {
-
-setShowPopup(false);
-
-}, 2000);
+};
 
 };
 
+function SpecRow({ label, value }) {
 
-
-if (!product)
 return (
+
+<div className="flex justify-between items-center border-b border-neutral-200 pb-2">
+
+<span className="text-neutral-500">
+
+{label}
+
+</span>
+
+<span className="text-[#0F2A44] font-medium">
+
+{value}
+
+</span>
+
+</div>
+
+);
+
+}
+
+
+if(!product)
+
+return(
+
 <p className="text-center py-20">
-Loading...
+
+Loading product...
+
 </p>
+
 );
 
 
+return(
 
-return (
+<section className="bg-white min-h-screen">
 
-<section className="bg-secondary min-h-screen">
+<Navbar/>
 
-<Navbar />
 
 <div className="max-w-6xl mx-auto px-6 py-16">
 
 
-{/* TOP SECTION */}
+{/* TOP GRID */}
 
-<div className="grid md:grid-cols-2 gap-14">
+<div className="grid md:grid-cols-2 gap-16">
 
 
-{/* IMAGE SIDE */}
+{/* IMAGE SECTION */}
 
 <div>
 
+
 <img
-src={selectedImage || "/placeholder.png"}
-className="rounded-2xl shadow-soft w-full object-cover"
+
+src={selectedImage ||
+
+"/placeholder.png"}
+
+className="rounded-xl shadow-soft w-full object-cover"
+
 />
 
 
@@ -133,21 +182,34 @@ className="rounded-2xl shadow-soft w-full object-cover"
 
 <div className="flex gap-3 mt-4 flex-wrap">
 
-{product.images?.map((img, i) => (
+{product.images?.map((img,i)=>(
 
 <img
+
 key={i}
+
 src={img}
-onClick={() => setSelectedImage(img)}
+
+onClick={()=>setSelectedImage(img)}
+
 className={`
 
-w-16 h-16 rounded-lg cursor-pointer object-cover border
+w-16 h-16 rounded-lg
 
-${selectedImage === img
-? "border-primary"
-: "border-neutral-200"}
+cursor-pointer object-cover border
+
+${selectedImage===img
+
+?
+
+"border-[#D4AF37]"
+
+:
+
+"border-neutral-200"}
 
 `}
+
 />
 
 ))}
@@ -157,69 +219,135 @@ ${selectedImage === img
 </div>
 
 
-
 {/* RIGHT SIDE */}
 
 <div>
 
 
-<h1 className="text-4xl font-semibold text-primary">
+<h1
+
+className="text-4xl
+
+font-heading
+
+text-[#0F2A44]"
+
+>
 
 {product.title}
 
 </h1>
 
 
-{product.shortDescription && (
+<p
 
-<p className="text-lg text-neutral-500 mt-3">
+className="text-[#D4AF37]
 
-{product.shortDescription}
+text-3xl
 
-</p>
+mt-4
 
-)}
+font-semibold"
 
+>
 
-<p className="text-3xl text-accent mt-4 font-semibold">
-
-₹ {product.price}
+₹ {formatPrice(product.price)}
 
 </p>
 
 
 {/* TRUST STRIP */}
 
-<div className="mt-4 text-sm text-neutral-500 space-y-1">
+<div
 
-<p>✔ Free Delivery Available</p>
+className="mt-4
 
-<p>✔ Cash on Delivery Available</p>
+text-sm
 
-<p>✔ Secure Checkout</p>
+text-neutral-500
+
+space-y-1"
+
+>
+
+<p>✔ Hallmarked Jewelry</p>
+
+<p>✔ Secure Store Purchase</p>
+
+<p>✔ WhatsApp Support Available</p>
 
 </div>
 
 
-{product.size && (
+{/* JEWELRY DETAILS */}
 
-<p className="mt-4 text-sm">
+<div className="mt-10">
 
-Size: {product.size}
+<h2 className="text-xl font-heading text-[#0F2A44] mb-4">
 
-</p>
+Jewelry Details
 
+</h2>
+
+<div className="bg-[#fafafa] rounded-2xl p-5 sm:p-6 grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-8 text-sm">
+
+{product.weight && (
+<SpecRow label="Weight" value={product.weight} />
 )}
 
+{product.purity && (
+<SpecRow label="Purity" value={product.purity} />
+)}
 
+{product.material && (
+<SpecRow label="Material" value={product.material} />
+)}
 
-{/* BUTTONS DESKTOP */}
+{product.stoneType && (
+<SpecRow label="Stone Type" value={product.stoneType} />
+)}
 
-<div className="hidden md:flex gap-4 mt-8">
+{product.makingCharges && (
+<SpecRow label="Making Charges" value={product.makingCharges} />
+)}
+
+{product.deliveryTime && (
+<SpecRow label="Delivery Time" value={product.deliveryTime} />
+)}
+
+{product.customizable !== undefined && (
+<SpecRow
+label="Customization"
+value={product.customizable ? "Available" : "Not Available"}
+/>
+)}
+
+</div>
+
+</div>
+
+{/* BUTTONS */}
+
+<div
+
+className="flex gap-4 mt-8"
+
+>
 
 <button
+
 onClick={handleAddToCart}
-className="bg-primary text-white px-6 py-3 rounded-lg hover:scale-[1.03] transition"
+
+className="bg-[#0F2A44]
+
+text-white
+
+px-6
+
+py-3
+
+rounded-lg"
+
 >
 
 Add to Cart
@@ -228,36 +356,72 @@ Add to Cart
 
 
 <a
-href={`https://wa.me/918219174058?text=Hi I want to order ${product.title}`}
+
+href={`https://wa.me/918219174058?text=Hi I want to enquire about ${product.title}`}
+
 target="_blank"
-className="border border-primary text-primary px-6 py-3 rounded-lg hover:bg-primary hover:text-white transition"
+
+className="border
+
+border-[#0F2A44]
+
+text-[#0F2A44]
+
+px-6
+
+py-3
+
+rounded-lg"
+
 >
 
-WhatsApp Order
+WhatsApp Enquiry
 
 </a>
 
 </div>
 
-</div>
 
 </div>
 
+</div>
 
 
-{/* DESCRIPTION BLOCK */}
+{/* DESCRIPTION */}
 
-{product.description && (
+{product.description&&(
 
-<div className="mt-16 bg-white rounded-xl shadow-soft p-8">
+<div
 
-<h2 className="text-2xl font-semibold text-primary mb-4">
+className="mt-16
+
+bg-white
+
+rounded-xl
+
+shadow-soft
+
+p-8"
+
+>
+
+<h2
+
+className="text-2xl
+
+font-heading
+
+text-[#0F2A44]
+
+mb-4"
+
+>
 
 Product Description
 
 </h2>
 
-<p className="text-neutral-600 leading-relaxed">
+<p>
 
 {product.description}
 
@@ -268,109 +432,52 @@ Product Description
 )}
 
 
-
-{/* BENEFITS */}
-
-{product.benefits?.length > 0 && (
-
-<div className="mt-10">
-
-<h2 className="text-2xl font-semibold text-primary mb-6">
-
-Key Benefits
-
-</h2>
-
-<div className="grid md:grid-cols-3 gap-6">
-
-{product.benefits.map((b, i) => (
-
-<div
-key={i}
-className="bg-white rounded-xl shadow-soft p-5"
->
-
-✔ {b}
-
-</div>
-
-))}
-
-</div>
-
-</div>
-
-)}
-
-
-
-{/* INGREDIENTS */}
-
-{product.ingredients && (
-
-<div className="mt-12 bg-white rounded-xl shadow-soft p-8">
-
-<h2 className="text-2xl font-semibold text-primary mb-4">
-
-Ingredients
-
-</h2>
-
-<p className="text-neutral-600">
-
-{product.ingredients}
-
-</p>
-
-</div>
-
-)}
-
-
-
-{/* HOW TO USE */}
-
-{product.howToUse && (
-
-<div className="mt-12 bg-white rounded-xl shadow-soft p-8">
-
-<h2 className="text-2xl font-semibold text-primary mb-4">
-
-How to Use
-
-</h2>
-
-<p className="text-neutral-600">
-
-{product.howToUse}
-
-</p>
-
-</div>
-
-)}
-
-
-
 {/* RELATED PRODUCTS */}
 
-{relatedProducts.length > 0 && (
+{relatedProducts.length>0&&(
 
 <div className="mt-20">
 
-<h2 className="text-2xl font-semibold text-primary mb-8">
 
-Related Products
+<h2
+
+className="text-2xl
+
+font-heading
+
+text-[#0F2A44]
+
+mb-8"
+
+>
+
+Related Jewelry
 
 </h2>
 
-<div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
 
-{relatedProducts.map(product => (
+<div
+
+className="grid
+
+grid-cols-2
+
+md:grid-cols-3
+
+lg:grid-cols-4
+
+gap-6"
+
+>
+
+{relatedProducts.map(product=>(
 
 <ProductCard
+
 key={product._id}
+
 product={product}
+
 />
 
 ))}
@@ -381,18 +488,47 @@ product={product}
 
 )}
 
-
 </div>
 
 
+{/* MOBILE CTA */}
 
-{/* MOBILE CTA BAR */}
+<div
 
-<div className="md:hidden fixed bottom-0 left-0 w-full bg-white border-t shadow-soft p-4 flex gap-3 z-50">
+className="md:hidden
+
+fixed bottom-0
+
+left-0
+
+w-full
+
+bg-white
+
+border-t
+
+shadow-soft
+
+p-4
+
+flex gap-3"
+
+>
 
 <button
+
 onClick={handleAddToCart}
-className="flex-1 bg-primary text-white py-3 rounded-lg"
+
+className="flex-1
+
+bg-[#0F2A44]
+
+text-white
+
+py-3
+
+rounded-lg"
+
 >
 
 Add to Cart
@@ -401,26 +537,110 @@ Add to Cart
 
 
 <a
-href={`https://wa.me/918219174058?text=Hi I want to order ${product.title}`}
+
+href={`https://wa.me/918219174058?text=Hi I want to enquire about ${product.title}`}
+
 target="_blank"
-className="flex-1 border border-primary text-primary py-3 rounded-lg text-center"
+
+className="flex-1
+
+border
+
+border-[#0F2A44]
+
+text-[#0F2A44]
+
+py-3
+
+rounded-lg
+
+text-center"
+
 >
 
-WhatsApp Order
+WhatsApp
 
 </a>
 
 </div>
 
 
+{/* POPUP */}
 
-{/* SUCCESS POPUP */}
 
 {showPopup && (
 
-<div className="fixed top-6 right-6 bg-primary text-white px-6 py-3 rounded-xl shadow-lg z-50">
+<div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 px-4">
 
-Added to cart successfully ✅
+<div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-8 text-center relative">
+
+
+{/* ICON */}
+
+<div className="w-16 h-16 mx-auto rounded-full bg-[#D4AF37]/10 flex items-center justify-center text-3xl">
+
+✔
+
+</div>
+
+
+{/* TITLE */}
+
+<h3 className="text-2xl font-heading text-[#0F2A44] mt-5">
+
+Added to Cart
+
+</h3>
+
+
+{/* MESSAGE */}
+
+<p className="text-neutral-500 mt-2">
+
+{product.title} has been added to your cart successfully
+
+</p>
+
+
+{/* BUTTONS */}
+
+<div className="flex gap-4 mt-8 flex-col sm:flex-row">
+
+<a
+href="/cart"
+className="flex-1 bg-[#0F2A44] text-white py-3 rounded-full hover:scale-[1.03] transition"
+>
+
+View Cart
+
+</a>
+
+
+<button
+onClick={()=>setShowPopup(false)}
+className="flex-1 border border-[#0F2A44] text-[#0F2A44] py-3 rounded-full hover:bg-[#0F2A44] hover:text-white transition"
+>
+
+Continue Shopping
+
+</button>
+
+</div>
+
+
+{/* CLOSE BUTTON */}
+
+<button
+onClick={()=>setShowPopup(false)}
+className="absolute top-4 right-5 text-neutral-400 hover:text-black"
+>
+
+✕
+
+</button>
+
+
+</div>
 
 </div>
 

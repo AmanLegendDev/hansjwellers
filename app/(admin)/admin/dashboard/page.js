@@ -1,34 +1,41 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect,useState } from "react";
 import Link from "next/link";
 import {
+ShoppingCart,
 Package,
 Layers,
-ShoppingCart,
-Plus,
-Clock
+CheckCircle,
+TrendingUp,
+IndianRupee,
+Plus
 } from "lucide-react";
 
-export default function Dashboard() {
+export default function Dashboard(){
 
-const [stats, setStats] = useState({
-products: 0,
-categories: 0,
-orders: 0
+const[stats,setStats]=useState({
+
+products:0,
+categories:0,
+orders:0,
+orderHistory:0,
+todayOrders:0,
+todayRevenue:0
+
 });
 
 
-useEffect(() => {
+useEffect(()=>{
 
 fetch("/api/admin/stats")
-.then(res => res.json())
+.then(res=>res.json())
 .then(setStats);
 
-}, []);
+},[]);
 
 
-return (
+return(
 
 <div className="space-y-10">
 
@@ -39,22 +46,22 @@ return (
 
 <div>
 
-<h1 className="text-4xl font-semibold text-primary">
+<h1 className="text-4xl font-semibold text-[#0F2A44]">
 
-Dashboard Overview
+Hans Admin Dashboard
 
 </h1>
 
 <p className="text-neutral-500 mt-1">
 
-Control your store from one place
+Manage store activity and daily performance
 
 </p>
 
 </div>
 
 
-<div className="flex gap-3">
+<div className="flex gap-3 flex-wrap">
 
 <ActionBtn
 link="/admin/products/create"
@@ -63,7 +70,7 @@ text="Add Product"
 
 <ActionBtn
 link="/admin/orders"
-text="View Orders"
+text="Track Orders"
 />
 
 </div>
@@ -72,12 +79,20 @@ text="View Orders"
 
 
 
-{/* STATS CARDS */}
+{/* PRIMARY NAVIGATION CARDS */}
 
 <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
 
 
-<StatCard
+<NavCard
+title="Total Orders"
+value={stats.orders}
+icon={<ShoppingCart size={22}/>}
+link="/admin/orders"
+/>
+
+
+<NavCard
 title="Products"
 value={stats.products}
 icon={<Package size={22}/>}
@@ -85,7 +100,7 @@ link="/admin/products"
 />
 
 
-<StatCard
+<NavCard
 title="Categories"
 value={stats.categories}
 icon={<Layers size={22}/>}
@@ -93,21 +108,34 @@ link="/admin/categories"
 />
 
 
-<StatCard
-title="Orders"
-value={stats.orders}
-icon={<ShoppingCart size={22}/>}
-link="/admin/orders"
-/>
-
-
-<StatCard
+<NavCard
 title="Order History"
-value="View"
-icon={<Clock size={22}/>}
+value={stats.orderHistory}
+icon={<CheckCircle size={22}/>}
 link="/admin/order-history"
 />
 
+</div>
+
+
+
+{/* TODAY ANALYTICS */}
+
+<div className="grid md:grid-cols-2 gap-6">
+
+
+<AnalyticsCard
+title="Today's Orders"
+value={stats.todayOrders}
+icon={<TrendingUp size={20}/>}
+/>
+
+
+<AnalyticsCard
+title="Today's Revenue"
+value={`₹ ${formatPrice(stats.todayRevenue)}`}
+icon={<IndianRupee size={20}/>}
+/>
 
 </div>
 
@@ -115,9 +143,9 @@ link="/admin/order-history"
 
 {/* QUICK ACTION PANEL */}
 
-<div className="bg-white rounded-xl shadow-soft border border-borderSoft p-6">
+<div className="bg-white rounded-2xl shadow-soft p-6">
 
-<h2 className="text-lg font-semibold text-primary mb-5">
+<h2 className="text-xl font-semibold text-[#0F2A44] mb-5">
 
 Quick Actions
 
@@ -141,11 +169,6 @@ link="/admin/orders"
 text="Track Orders"
 />
 
-<ActionTile
-link="/admin/order-history"
-text="Order History"
-/>
-
 </div>
 
 </div>
@@ -159,24 +182,30 @@ text="Order History"
 
 
 
-/*
-========================
-CLICKABLE CARD COMPONENT
-========================
-*/
+function formatPrice(price){
 
-function StatCard({
+return new Intl.NumberFormat("en-IN").format(price||0);
+
+}
+
+
+
+/* NAV CARD */
+
+function NavCard({
+
 title,
 value,
 icon,
 link
-}) {
 
-return (
+}){
+
+return(
 
 <Link
 href={link}
-className="bg-white border border-borderSoft rounded-xl shadow-soft p-6 flex justify-between items-center hover:shadow-lg hover:scale-[1.02] transition"
+className="rounded-2xl shadow-soft p-6 flex justify-between items-center bg-white hover:shadow-lg transition"
 >
 
 <div>
@@ -187,7 +216,7 @@ className="bg-white border border-borderSoft rounded-xl shadow-soft p-6 flex jus
 
 </p>
 
-<h2 className="text-4xl font-semibold text-primary mt-2">
+<h2 className="text-4xl font-semibold mt-2 text-[#0F2A44]">
 
 {value}
 
@@ -196,7 +225,7 @@ className="bg-white border border-borderSoft rounded-xl shadow-soft p-6 flex jus
 </div>
 
 
-<div className="w-10 h-10 flex items-center justify-center rounded-lg bg-secondary text-primary">
+<div className="w-11 h-11 flex items-center justify-center rounded-xl bg-[#FAF8F3] text-[#0F2A44]">
 
 {icon}
 
@@ -210,22 +239,65 @@ className="bg-white border border-borderSoft rounded-xl shadow-soft p-6 flex jus
 
 
 
-/*
-========================
-BUTTON
-========================
-*/
+/* ANALYTICS CARD */
+
+function AnalyticsCard({
+
+title,
+value,
+icon
+
+}){
+
+return(
+
+<div className="bg-[#0F2A44] text-white rounded-2xl shadow-soft p-6 flex justify-between items-center">
+
+<div>
+
+<p className="text-white/70 text-sm">
+
+{title}
+
+</p>
+
+<h2 className="text-3xl font-semibold mt-1">
+
+{value}
+
+</h2>
+
+</div>
+
+
+<div className="bg-white/20 p-2 rounded-lg">
+
+{icon}
+
+</div>
+
+</div>
+
+);
+
+}
+
+
+
+/* ACTION BUTTON */
 
 function ActionBtn({
+
 link,
 text
-}) {
 
-return (
+}){
+
+return(
 
 <Link
 href={link}
-className="flex items-center gap-2 bg-primary text-white px-5 py-2 rounded-lg hover:opacity-90 transition"
+className="flex items-center gap-2 bg-[#0F2A44] text-white px-5 py-2 rounded-lg hover:scale-[1.02] transition"
 >
 
 <Plus size={16}/>
@@ -240,22 +312,20 @@ className="flex items-center gap-2 bg-primary text-white px-5 py-2 rounded-lg ho
 
 
 
-/*
-========================
-TILES
-========================
-*/
+/* TILE */
 
 function ActionTile({
+
 link,
 text
-}) {
 
-return (
+}){
+
+return(
 
 <Link
 href={link}
-className="bg-secondary border border-borderSoft rounded-xl p-4 hover:bg-primary hover:text-white transition font-medium text-center"
+className="bg-[#FAF8F3] rounded-xl p-4 hover:bg-[#0F2A44] hover:text-white transition text-center font-medium"
 >
 
 {text}

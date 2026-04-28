@@ -14,31 +14,26 @@ unique: true,
 index: true
 },
 
-shortDescription: {
-type: String
+shortDescription: String,
+
+description: String,
+
+weight: String,
+
+purity: String,
+
+material: String,
+
+stoneType: String,
+
+makingCharges: String,
+
+customizable: {
+type: Boolean,
+default: false
 },
 
-description: {
-type: String
-},
-
-benefits: [
-{
-type: String
-}
-],
-
-ingredients: {
-type: String
-},
-
-howToUse: {
-type: String
-},
-
-size: {
-type: String
-},
+deliveryTime: String,
 
 price: {
 type: Number,

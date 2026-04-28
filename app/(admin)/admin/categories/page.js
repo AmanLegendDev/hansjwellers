@@ -2,17 +2,22 @@
 
 import { useEffect, useState } from "react";
 
-export default function CategoriesPage() {
+export default function CategoriesPage(){
 
-const [name, setName] = useState("");
+const [name,setName]=useState("");
+const [image,setImage]=useState("");
+const [categories,setCategories]=useState([]);
+const [loading,setLoading]=useState(false);
+const [uploading,setUploading]=useState(false);
 
-const [categories, setCategories] = useState([]);
 
-const [loading, setLoading] = useState(false);
-
-
+/*
+FETCH CATEGORIES
+*/
 
 const fetchCategories = async () => {
+
+try{
 
 const res = await fetch("/api/categories/list");
 
@@ -20,47 +25,110 @@ const data = await res.json();
 
 setCategories(data);
 
+}catch(err){
+
+console.log("Fetch categories failed",err);
+
+}
+
+};
+
+
+useEffect(()=>{
+
+fetchCategories();
+
+},[]);
+
+
+
+/*
+UPLOAD IMAGE (USES SAME API AS PRODUCTS)
+*/
+
+const uploadImage = async(file)=>{
+
+if(!file) return;
+
+setUploading(true);
+
+try{
+
+const formData = new FormData();
+
+formData.append("file",file);
+
+const res = await fetch("/api/upload",{
+
+method:"POST",
+
+body:formData
+
+});
+
+const data = await res.json();
+
+if(data?.url){
+
+setImage(data.url);
+
+}else{
+
+alert("Upload failed");
+
+}
+
+}catch(err){
+
+console.log("Upload error",err);
+
+}
+
+setUploading(false);
+
 };
 
 
 
-useEffect(() => {
+/*
+CREATE CATEGORY
+*/
 
-fetchCategories();
-
-}, []);
-
-
-
-const handleSubmit = async (e) => {
+const handleSubmit = async(e)=>{
 
 e.preventDefault();
 
-if (!name.trim()) return;
+if(!name || !image){
+
+alert("Name and image required");
+
+return;
+
+}
 
 setLoading(true);
 
-const res = await fetch("/api/categories/create", {
+await fetch("/api/categories/create",{
 
-method: "POST",
+method:"POST",
 
-headers: {
-"Content-Type": "application/json"
+headers:{
+"Content-Type":"application/json"
 },
 
-body: JSON.stringify({
-name
+body:JSON.stringify({
+
+name,
+image
+
 })
 
 });
 
-if (res.ok) {
-
 setName("");
+setImage("");
 
 fetchCategories();
-
-}
 
 setLoading(false);
 
@@ -68,25 +136,23 @@ setLoading(false);
 
 
 
-const deleteCategory = async (id) => {
+/*
+DELETE CATEGORY
+*/
 
-const confirmDelete = confirm(
-"Delete this category?"
-);
+const deleteCategory = async(id)=>{
 
-if (!confirmDelete) return;
+if(!confirm("Delete category?")) return;
 
-await fetch("/api/categories/delete", {
+await fetch("/api/categories/delete",{
 
-method: "POST",
+method:"POST",
 
-headers: {
-"Content-Type": "application/json"
+headers:{
+"Content-Type":"application/json"
 },
 
-body: JSON.stringify({
-id
-})
+body:JSON.stringify({id})
 
 });
 
@@ -96,73 +162,81 @@ fetchCategories();
 
 
 
-return (
+return(
 
-<div className="space-y-8">
-
+<div className="space-y-10 max-w-3xl">
 
 {/* HEADER */}
-
-<div className="flex justify-between items-center">
 
 <div>
 
 <h1 className="text-3xl font-semibold text-primary">
 
-Categories
+Categories Manager
 
 </h1>
 
 <p className="text-neutral-500 mt-1">
 
-Manage your product categories
+Create categories with image for homepage slider
 
 </p>
 
 </div>
 
 
-<div className="bg-secondary px-4 py-2 rounded-lg font-medium">
 
-Total: {categories.length}
+{/* CREATE CATEGORY */}
 
-</div>
-
-</div>
-
-
-
-{/* CREATE CARD */}
-
-<div className="bg-white border border-borderSoft rounded-xl shadow-soft p-6 max-w-xl">
-
-<h2 className="font-semibold text-primary mb-4">
-
-Create New Category
-
-</h2>
-
+<div className="bg-white shadow-soft rounded-xl p-6">
 
 <form
 onSubmit={handleSubmit}
-className="flex gap-3"
+className="space-y-4"
 >
 
+
 <input
-type="text"
-placeholder="Enter category name"
-className="flex-1 border border-borderSoft p-3 rounded-lg outline-none focus:ring-2 focus:ring-primary/30"
+placeholder="Category name"
 value={name}
-onChange={(e)=>setName(e.target.value)}
+onChange={e=>setName(e.target.value)}
+className="border p-3 rounded-lg w-full"
 />
+
+
+<input
+type="file"
+onChange={e=>uploadImage(e.target.files[0])}
+/>
+
+
+{uploading && (
+
+<p className="text-sm text-neutral-400">
+
+Uploading image...
+
+</p>
+
+)}
+
+
+{image && (
+
+<img
+src={image}
+className="w-20 h-20 rounded-lg object-cover"
+/>
+
+)}
 
 
 <button
 disabled={loading}
-className="bg-primary text-white px-6 rounded-lg hover:opacity-90 transition"
+className="bg-blue-400 text-white px-6 py-2 rounded-lg cursor-pointer "
 >
 
-{loading ? "Creating..." : "Create"}
+{loading ? "Creating..." : "Create Category"}
 
 </button>
 
@@ -174,11 +248,11 @@ className="bg-primary text-white px-6 rounded-lg hover:opacity-90 transition"
 
 {/* CATEGORY LIST */}
 
-<div className="bg-white border border-borderSoft rounded-xl shadow-soft">
+<div className="bg-white shadow-soft rounded-xl">
 
 {categories.length === 0 ? (
 
-<div className="p-8 text-center text-neutral-400">
+<div className="p-8 text-neutral-400 text-center">
 
 No categories yet
 
@@ -186,23 +260,35 @@ No categories yet
 
 ) : (
 
-categories.map((cat)=> (
+categories.map(cat => (
 
 <div
 key={cat._id}
-className="flex justify-between items-center px-6 py-4 border-b last:border-none hover:bg-secondary transition"
+className="flex justify-between items-center px-6 py-4 border-b last:border-none"
 >
 
-<div className="font-medium text-text">
+
+<div className="flex gap-4 items-center">
+
+
+<img
+src={cat.image || "/placeholder.png"}
+className="w-12 h-12 rounded-lg object-cover"
+/>
+
+
+<span className="font-medium">
 
 {cat.name}
+
+</span>
 
 </div>
 
 
 <button
 onClick={()=>deleteCategory(cat._id)}
-className="text-red-500 text-sm hover:underline"
+className="text-white font-bold bg-red-600 p-2 rounded-xl text-sm cursor-pointer"
 >
 
 Delete
@@ -216,6 +302,7 @@ Delete
 )}
 
 </div>
+
 
 </div>
 

@@ -1,121 +1,181 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
+const heroImages = [
+  "/hero-bangles.jpg",
+  "/hero-bridal.jpg",
+  "/hero-necklace.jpg",
+];
+
+// sparkle fixed positions (no Math.random)
+const sparklePositions = [
+  { top: "15%", left: "10%" },
+  { top: "30%", left: "80%" },
+  { top: "55%", left: "20%" },
+  { top: "70%", left: "75%" },
+  { top: "25%", left: "50%" },
+  { top: "60%", left: "40%" },
+  { top: "45%", left: "90%" },
+  { top: "80%", left: "15%" },
+];
+
 export default function Hero() {
 
-return (
+  const [index, setIndex] = useState(0);
 
-<section className="bg-secondary relative overflow-hidden">
+  /*
+  AUTO ROTATE HERO BACKGROUND
+  */
+
+  useEffect(() => {
+
+    const interval = setInterval(() => {
+
+      setIndex(prev =>
+        (prev + 1) % heroImages.length
+      );
+
+    }, 4000);
+
+    return () => clearInterval(interval);
+
+  }, []);
 
 
-{/* SOFT BACKGROUND GLOW */}
+  return (
 
-<div className="absolute top-[-120px] right-[-120px] w-[400px] h-[400px] bg-primary/10 rounded-full blur-3xl hidden md:block"/>
+<section className="relative h-[88vh] min-h-[620px] flex items-center justify-center overflow-hidden">
+
+{/* BACKGROUND ROTATING IMAGE */}
+
+<img
+src={heroImages[index]}
+loading="eager"
+className="absolute inset-0 w-full h-full object-cover transition-opacity duration-[1500ms]"
+/>
 
 
-<div className="max-w-7xl mx-auto px-6 py-20 md:py-24 grid md:grid-cols-2 gap-10 items-center">
+{/* DARK OVERLAY */}
+
+<div className="absolute inset-0 bg-[#0F2A44]/70"/>
 
 
-{/* LEFT CONTENT */}
+{/* GOLD LIGHT GLOW */}
+
+<div className="absolute -top-20 -left-20 w-[400px] h-[400px] bg-[#D4AF37]/20 blur-[140px] rounded-full"/>
+
+
+{/* FLOATING SPARKLES */}
+
+<div className="absolute inset-0 pointer-events-none">
+
+{sparklePositions.map((pos,i)=>(
 
 <motion.div
-initial={{ opacity: 0, y: 30 }}
-animate={{ opacity: 1, y: 0 }}
-transition={{ duration: 0.6 }}
+key={i}
+initial={{opacity:0,y:20}}
+animate={{
+opacity:[0,.8,0],
+y:[0,-40]
+}}
+transition={{
+duration:4,
+delay:i*.8,
+repeat:Infinity
+}}
+className="absolute w-1 h-1 bg-[#D4AF37] rounded-full"
+style={pos}
+/>
+
+))}
+
+</div>
+
+
+
+<div className="relative z-10 max-w-7xl mx-auto px-6 text-center md:text-left">
+
+
+{/* TEXT CONTENT */}
+
+<motion.div
+
+initial={{opacity:0,y:40}}
+
+animate={{opacity:1,y:0}}
+
+transition={{duration:.8}}
+
 >
 
 
-{/* BADGE */}
+<p className="text-[#D4AF37] tracking-[3px] uppercase text-xs font-medium">
 
-<span className="inline-block text-xs tracking-wide bg-primary/10 text-primary px-4 py-1 rounded-full font-medium">
-
-Premium Beauty Collection
-
-</span>
-
-
-{/* TITLE */}
-
-<h1 className="mt-5 text-4xl md:text-5xl lg:text-6xl font-semibold text-primary leading-tight">
-
-Elevate Your Natural Beauty
-With Premium Cosmetics
-
-</h1>
-
-
-{/* DESCRIPTION */}
-
-<p className="mt-6 text-neutral-600 max-w-lg text-lg">
-
-Discover skincare and makeup crafted for confidence,
-radiance, and everyday elegance.
+Hans Jewellers Shimla
 
 </p>
 
 
-{/* CTA BUTTONS */}
+<h1 className="mt-6 text-4xl md:text-6xl font-heading text-white leading-tight">
 
-<div className="flex gap-4 mt-8 flex-wrap">
+Timeless Jewelry
+
+<span className="text-[#D4AF37]">
+
+ Crafted For You
+
+</span>
+
+</h1>
+
+
+<p className="mt-6 text-white/80 max-w-xl mx-auto md:mx-0 text-lg">
+
+Explore handcrafted gold, silver & bridal collections designed with purity and elegance.
+
+</p>
+
+
+
+<div className="flex flex-wrap gap-4 mt-10 justify-center md:justify-start">
+
 
 <Link
-href="/products" prefetch={true}
-className="bg-primary text-white px-7 py-3 rounded-xl shadow-soft hover:scale-[1.03] transition"
->
-
-Shop Now
-
-</Link>
-
-
-<Link
-href="/products" prefetch={true}
-className="border border-primary text-primary px-7 py-3 rounded-xl hover:bg-primary hover:text-white transition"
+href="/products"
+className="bg-[#D4AF37] text-white px-8 py-3 rounded-full shadow-xl hover:scale-[1.05] transition"
 >
 
 Explore Collection
 
 </Link>
 
-</div>
 
-
-{/* TRUST BADGE MOBILE VERSION */}
-
-<div className="mt-6 md:hidden bg-white px-5 py-3 rounded-xl shadow-soft text-sm w-fit">
-
-✨ Trusted by 2,000+ happy customers
-
-</div>
-
-
-</motion.div>
-
-
-
-{/* RIGHT IMAGE */}
-
-<motion.div
-initial={{ opacity: 0, scale: 0.95 }}
-animate={{ opacity: 1, scale: 1 }}
-transition={{ duration: 0.7 }}
-className="relative"
+<a
+href="https://wa.me/918219174058"
+target="_blank"
+className="border border-white text-white px-8 py-3 rounded-full hover:bg-white hover:text-[#0F2A44] transition"
 >
 
+WhatsApp Consultation
 
-<img
-src="/hero-banner.jpg"
-className="rounded-2xl shadow-soft object-cover w-full max-h-[420px]"
-/>
+</a>
 
 
-{/* FLOATING TRUST BADGE DESKTOP */}
+</div>
 
-<div className="hidden md:block absolute bottom-6 left-6 bg-white px-5 py-3 rounded-xl shadow-soft text-sm">
 
-✨ Trusted by 2,000+ happy customers
+{/* TRUST STRIP */}
+
+<div className="flex gap-6 mt-10 text-white/80 text-sm justify-center md:justify-start flex-wrap">
+
+<span>✔ Hallmarked Gold</span>
+
+<span>✔ Trusted Shimla Store</span>
+
+<span>✔ Custom Jewelry Available</span>
 
 </div>
 
@@ -123,10 +183,28 @@ className="rounded-2xl shadow-soft object-cover w-full max-h-[420px]"
 </motion.div>
 
 
+{/* SCROLL DOWN ARROW */}
+
+<motion.div
+
+animate={{y:[0,12,0]}}
+
+transition={{repeat:Infinity,duration:1.5}}
+
+className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white text-sm"
+
+>
+
+↓
+
+</motion.div>
+
+
 </div>
+
 
 </section>
 
-);
+  );
 
 }

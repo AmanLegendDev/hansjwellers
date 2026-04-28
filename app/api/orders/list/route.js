@@ -5,8 +5,11 @@ export async function GET() {
 
   await connectDB();
 
-  const orders = await Order.find()
-    .sort({ createdAt: -1 });
+const orders = await Order.find({
+
+paymentStatus: { $ne: "failed" }
+
+}).sort({ createdAt: -1 });
 
   return Response.json(orders);
 

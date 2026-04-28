@@ -2,7 +2,6 @@ import Navbar from "@/components/layout/Navbar";
 import Hero from "@/components/store/Hero";
 import FeaturedProducts from "@/components/store/FeaturedProducts";
 import CategoriesPreview from "@/components/store/CategoriesPreview";
-import CategoriesSlider from "@/components/store/CategoriesSlider";
 import WhyChooseUs from "@/components/store/WhyChooseUs";
 import TrustStrip from "@/components/store/TrustStrip";
 import AboutBrand from "@/components/store/AboutBrand";
@@ -12,10 +11,10 @@ export default function Home() {
     <main>
        <Navbar />
        <Hero />
-       <CategoriesSlider />
+       <CategoriesPreview/>
+       <TrustStrip />
        <FeaturedProducts />
        <WhyChooseUs />
-       <TrustStrip />
        <AboutBrand />
      
 

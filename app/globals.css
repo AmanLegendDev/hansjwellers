@@ -1,17 +1,131 @@
 @import "tailwindcss";
 
-@theme {
-  --color-primary: #1F4D3A;
-  --color-secondary: #F7F5F2;
-  --color-accent: #C7A17A;
-  --color-text: #222222;
+/* =========================
+HANS JEWELLERS DESIGN TOKENS
+========================= */
+
+:root {
+
+--royal-blue: #0F2A44;
+
+--gold-accent: #D4AF37;
+
+--luxury-white: #FFFFFF;
+
+--soft-ivory: #FAF8F3;
+
+--text-primary: #1A1A1A;
+
+--border-soft: #ECECEC;
+
 }
 
+
+/* =========================
+GLOBAL BODY
+========================= */
+
 body {
+
 font-family: var(--font-inter);
-background: var(--background);
-color: var(--foreground);
+
+background: var(--luxury-white);
+
+color: var(--text-primary);
+
+-webkit-font-smoothing: antialiased;
+
 }
-h1,h2,h3,h4 {
+
+
+/* =========================
+HEADINGS
+========================= */
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+
 font-family: var(--font-playfair);
+
+letter-spacing: 0.3px;
+
+}
+
+
+/* =========================
+LUXURY BUTTON BASE STYLE
+========================= */
+
+.btn-primary {
+
+background: var(--royal-blue);
+
+color: white;
+
+padding: 12px 28px;
+
+border-radius: 10px;
+
+transition: 0.25s ease;
+
+}
+
+.btn-primary:hover {
+
+background: #0c2135;
+
+}
+
+
+.btn-gold {
+
+background: var(--gold-accent);
+
+color: white;
+
+padding: 12px 28px;
+
+border-radius: 10px;
+
+transition: 0.25s ease;
+
+}
+
+.btn-gold:hover {
+
+opacity: 0.9;
+
+}
+
+
+/* =========================
+CARD STYLE
+========================= */
+
+.card {
+
+background: white;
+
+border-radius: 14px;
+
+border: 1px solid var(--border-soft);
+
+box-shadow: 0 4px 18px rgba(0,0,0,0.04);
+
+}
+
+
+/* =========================
+SECTION SPACING SYSTEM
+========================= */
+
+.section {
+
+padding-top: 80px;
+
+padding-bottom: 80px;
+
 }

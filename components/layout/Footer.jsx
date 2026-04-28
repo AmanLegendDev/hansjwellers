@@ -1,100 +1,142 @@
 import Link from "next/link";
 
-export default function Footer() {
+export default function Footer(){
 
-return (
+return(
 
-<footer className="bg-white border-t mt-20">
+<footer className="bg-[#0F2A44] text-white mt-24">
 
-<div className="max-w-7xl mx-auto px-6 py-14 grid md:grid-cols-4 gap-10">
+
+<div className="max-w-7xl mx-auto px-6 py-16 grid md:grid-cols-4 gap-10">
 
 
 {/* BRAND */}
 
 <div>
 
-<h2 className="text-primary text-xl font-semibold">
+<img
+src="/logo.png"
+className="h-10"
+/>
 
-Hilaireofficial
+<p className="text-white/70 mt-4 text-sm leading-relaxed">
 
-</h2>
-
-<p className="text-neutral-500 mt-3 text-sm">
-
-Premium beauty essentials crafted for confidence and elegance.
+Hans Jewellers is a trusted jewellery showroom located at
+Mall Road Shimla offering hallmarked gold jewellery,
+custom orders and personalised in-store assistance.
 
 </p>
+
+
+<a
+href="https://wa.me/918219174058"
+target="_blank"
+className="inline-block mt-5 px-6 py-2 bg-[#D4AF37] text-white rounded-full text-sm"
+>
+
+WhatsApp Support
+
+</a>
 
 </div>
 
 
-{/* SHOP */}
+
+{/* QUICK LINKS */}
 
 <div>
 
-<h3 className="font-semibold mb-3">
+<h3 className="font-semibold mb-4 text-[#D4AF37]">
 
-Shop
+Quick Links
 
 </h3>
 
-<div className="flex flex-col gap-2 text-sm text-neutral-500">
+<div className="flex flex-col gap-2 text-sm text-white/70">
 
-<Link href="/products">All Products</Link>
+<Link href="/">Home</Link>
+
+<Link href="/products">Products</Link>
+
+<Link href="/orders">Track Orders</Link>
 
 <Link href="/cart">Cart</Link>
 
-<Link href="/checkout">Checkout</Link>
-
 </div>
 
 </div>
 
 
-{/* SUPPORT */}
+
+{/* STORE INFO */}
 
 <div>
 
-<h3 className="font-semibold mb-3">
+<h3 className="font-semibold mb-4 text-[#D4AF37]">
 
-Support
+Visit Our Store
 
 </h3>
 
-<div className="flex flex-col gap-2 text-sm text-neutral-500">
+<div className="flex flex-col gap-2 text-sm text-white/70">
 
-<p>Shipping Policy</p>
+<p>94, The Mall Road Shimla</p>
 
-<p>Return Policy</p>
+<p>Himachal Pradesh, India</p>
 
-<p>Privacy Policy</p>
+<p>📞 98056-11112</p>
+
+<p>📞 96259-70888</p>
 
 </div>
 
 </div>
 
 
-{/* CONTACT */}
+
+{/* SOCIAL */}
 
 <div>
 
-<h3 className="font-semibold mb-3">
+<h3 className="font-semibold mb-4 text-[#D4AF37]">
 
-Contact
+Connect With Us
 
 </h3>
 
-<p className="text-sm text-neutral-500">
+<div className="flex flex-col gap-3 text-sm">
 
-Shimla, Himachal Pradesh
+<a
+href="https://www.instagram.com/hansjewellersshimla?igsh=amZjcGxneWFxMmgw"
+target="_blank"
+className="text-white/70 hover:text-white"
+>
 
-</p>
+Instagram
 
-<p className="text-sm text-neutral-500 mt-1">
+</a>
 
-+91 8219174058
+<a
+href="https://www.facebook.com/HansJewellers"
+target="_blank"
+className="text-white/70 hover:text-white"
+>
 
-</p>
+Facebook
+
+</a>
+
+<a
+href="https://wa.me/918219174058"
+target="_blank"
+className="text-white/70 hover:text-white"
+>
+
+WhatsApp
+
+</a>
+
+</div>
 
 </div>
 
@@ -102,11 +144,19 @@ Shimla, Himachal Pradesh
 </div>
 
 
-<div className="text-center text-xs text-neutral-400 pb-6">
 
-© {new Date().getFullYear()} Hilaireofficial. All rights reserved.
+{/* BOTTOM STRIP */}
+
+<div className="border-t border-white/10 text-center text-xs text-white/60 py-5 px-6">
+
+© {new Date().getFullYear()} Hans Jewellers Shimla. All rights reserved.
+
+<br/>
+
+Designed & Developed by <span className="text-[#D4AF37] font-medium">Aman Digital Solutions</span>
 
 </div>
+
 
 </footer>
 

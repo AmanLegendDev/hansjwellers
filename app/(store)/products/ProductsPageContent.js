@@ -1,135 +1,170 @@
 "use client";
 
-
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import ProductCard from "@/components/store/ProductCard";
 import Navbar from "@/components/layout/Navbar";
 import Link from "next/link";
 
-export default function ProductsPage() {
+export default function ProductsPage(){
 
 const searchParams = useSearchParams();
+const selectedCategory = searchParams.get("category");
 
-const selectedCategory =
-searchParams.get("category");
+const [products,setProducts]=useState([]);
+const [categories,setCategories]=useState([]);
+const [loading,setLoading]=useState(true);
 
-const [products, setProducts] = useState(null);
 
-const [categories, setCategories] =
-useState([]);
+useEffect(()=>{
 
-useEffect(() => {
+const fetchData=async()=>{
 
-const fetchData = async () => {
+try{
 
-try {
-
-const [productsRes, categoriesRes] = await Promise.all([
-  fetch("/api/store/products"),
-  fetch("/api/categories/dropdown"),
+const [productsRes,categoriesRes]=await Promise.all([
+fetch("/api/store/products"),
+fetch("/api/categories/dropdown")
 ]);
 
-const productsData = await productsRes.json();
-const categoriesData = await categoriesRes.json();
+const productsData=await productsRes.json();
+const categoriesData=await categoriesRes.json();
 
 setProducts(productsData);
 setCategories(categoriesData);
 
-} catch (err) {
+}catch(err){
 
-console.error("Fetch failed", err);
+console.log(err);
 
 }
+
+setLoading(false);
 
 };
 
 fetchData();
 
-}, []);
+},[]);
 
 
-// FILTERED PRODUCTS MODE
-if (!products)
-return (
-<div className="p-10 text-center">
-Loading products...
+
+if(loading){
+
+return(
+
+<section className="bg-white min-h-screen">
+
+<Navbar/>
+
+<div className="flex items-center justify-center h-[40vh] text-[#0F2A44] text-lg">
+
+Loading Premium Collection...
+
 </div>
+
+</section>
+
 );
 
-const filteredProducts = selectedCategory && products
-? products.filter(
-p =>
-p.category?._id?.toString() === selectedCategory
-)
-: [];
+}
 
 
 
+const filteredProducts=selectedCategory
+?products.filter(p=>p.category?._id===selectedCategory)
+:products;
 
 
-return (
 
-<section className="bg-secondary min-h-screen">
+return(
 
-<Navbar />
+<section className="bg-[#FAF8F3] min-h-screen">
 
-<div className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
+<Navbar/>
 
 
-{/* PAGE HEADER */}
+{/* HERO MINI HEADER */}
+<div className="relative h-[260px] md:h-[300px] w-full overflow-hidden">
 
-<div className="mb-8 text-center">
+<img
+src="/hero-jewelry.jpg"
+className="absolute w-full h-full object-cover"
+/>
 
-<h1 className="text-3xl md:text-4xl font-semibold text-primary">
 
-Explore Our Collection
+{/* DARK OVERLAY */}
+
+<div className="absolute inset-0 bg-[#0F2A44]/75 backdrop-blur-[2px]" />
+
+
+{/* CONTENT */}
+
+<div className="relative z-10 flex flex-col items-center justify-center h-full text-white text-center px-6">
+
+<p className="text-[#D4AF37] uppercase tracking-[3px] text-xs">
+
+Hans Jewellers Shimla
+
+</p>
+
+<h1 className="text-3xl md:text-5xl font-heading mt-4">
+
+Luxury Jewelry Collection
 
 </h1>
 
-<p className="text-neutral-500 mt-2 max-w-xl mx-auto">
+<p className="mt-3 text-white/80 max-w-xl">
 
-Premium beauty essentials crafted for glowing skin,
-healthy hair and confident everyday care.
+Explore handcrafted gold jewellery designed for weddings, gifting and timeless elegance.
 
 </p>
 
 </div>
 
+</div>
 
 
-{/* CATEGORY SLIDER */}
 
-<div className="overflow-x-auto pb-4 mb-10">
+<div className="max-w-7xl mx-auto px-5 sm:px-6 py-14">
 
-<div className="flex gap-3 min-w-max">
+
+{/* CATEGORY PILLS */}
+
+<div className="sticky top-[70px] z-30 bg-[#FAF8F3] pb-6">
+
+<div className="flex gap-3 overflow-x-auto scrollbar-hide">
 
 <Link
-href="/products" prefetch
-className={`px-5 py-2 rounded-full border transition whitespace-nowrap
+href="/products"
+className={`px-6 py-2 rounded-full whitespace-nowrap text-sm font-medium transition
 
 ${!selectedCategory
-? "bg-primary text-white"
-: "bg-white text-primary border-primary hover:bg-primary hover:text-white"}
+?"bg-[#0F2A44] text-white shadow"
+:"border border-[#0F2A44] text-[#0F2A44] hover:bg-[#0F2A44]/10"}
 `}
 >
+
 All
+
 </Link>
 
 
-{categories?.map(cat => (
+{categories.map(cat=>(
 
 <Link
 key={cat._id}
-href={`/products?category=${cat._id}`} prefetch
-className={`px-5 py-2 rounded-full border transition whitespace-nowrap
+href={`/products?category=${cat._id}`}
+className={`px-6 py-2 rounded-full whitespace-nowrap text-sm font-medium transition
 
-${selectedCategory === cat._id
-? "bg-primary text-white"
-: "bg-white text-primary border-primary hover:bg-primary hover:text-white"}
+${selectedCategory===cat._id
+?"bg-[#0F2A44] text-white shadow"
+:"border border-[#0F2A44] text-[#0F2A44] hover:bg-[#0F2A44]/10"}
 `}
 >
+
 {cat.name}
+
 </Link>
 
 ))}
@@ -140,88 +175,36 @@ ${selectedCategory === cat._id
 
 
 
-{/* CATEGORY FILTER MODE */}
+{/* CATEGORY TITLE */}
 
-{selectedCategory ? (
+{selectedCategory &&(
 
-<div>
+<h2 className="text-3xl font-heading text-[#0F2A44] mb-10">
 
-<h2 className="text-2xl font-semibold text-primary mb-6">
-
-Selected Category Products
+{categories.find(c=>c._id===selectedCategory)?.name}
 
 </h2>
-
-<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-
-{filteredProducts.length === 0 ? (
-
-<div className="text-neutral-400">
-
-No products found
-
-</div>
-
-) : (
-
-filteredProducts.map(product => (
-
-<ProductCard
-key={product._id}
-product={product}
-/>
-
-))
 
 )}
 
-</div>
+
+
+{/* PRODUCT GRID */}
+
+{filteredProducts.length===0?(
+
+<div className="text-center py-20 text-neutral-500">
+
+No products found in this category
 
 </div>
 
-) : (
-
-/* ALL PRODUCTS GROUPED BY CATEGORY */
-
-<div className="space-y-16">
-
-{categories?.map(cat => {
-
-const categoryProducts =
-products.filter(
-p =>
-p.category?._id?.toString() ===
-cat._id.toString()
-);
-
-if (categoryProducts.length === 0)
-return null;
-
-return (
-
-<div key={cat._id}>
-
-<div className="flex justify-between items-center mb-5">
-
-<h2 className="text-2xl font-semibold text-primary">
-
-{cat.name}
-
-</h2>
-
-<Link
-href={`/products?category=${cat._id}`}
-className="text-sm text-primary hover:underline"
->
-View All
-</Link>
-
-</div>
+):(
 
 
-<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+<div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
 
-{categoryProducts?.map(product => (
+{filteredProducts.map(product=>(
 
 <ProductCard
 key={product._id}
@@ -232,15 +215,13 @@ product={product}
 
 </div>
 
-</div>
-
-);
-
-})}
-
-</div>
-
 )}
+
+
+
+{/* BOTTOM SPACE */}
+
+<div className="h-10"/>
 
 </div>
 

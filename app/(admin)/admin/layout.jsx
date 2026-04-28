@@ -4,23 +4,30 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export default function AdminLayout({ children }) {
+export default function AdminLayout({children}){
 
-const pathname = usePathname();
+const pathname=usePathname();
 
-const [open, setOpen] = useState(false);
+const[open,setOpen]=useState(false);
 
-const NavItem = ({ href, label }) => (
+const NavItem=({href,label})=>(
 
 <Link
+
 href={href}
-onClick={() => setOpen(false)}
+
+onClick={()=>setOpen(false)}
+
 className={`px-4 py-2 rounded-lg transition
+
 ${
-pathname === href
-? "bg-primary text-white"
-: "text-text hover:bg-secondary"
-}`}
+pathname===href
+?"bg-[#0F2A44] text-white"
+:"text-[#0F2A44] hover:bg-[#FAF8F3]"
+}
+
+`}
+
 >
 
 {label}
@@ -29,67 +36,70 @@ pathname === href
 
 );
 
-return (
 
-<div className="flex min-h-screen bg-secondary">
+return(
+
+<div className="flex min-h-screen bg-[#FAF8F3]">
 
 
 {/* SIDEBAR */}
 
 <aside
+
 className={`
 
 fixed lg:static inset-y-0 left-0 w-64
 
-bg-white border-r border-borderSoft
+bg-white border-r shadow-soft
 
 transform transition-transform duration-300
 
 z-50
 
-${open ? "translate-x-0" : "-translate-x-full"}
+${open?"translate-x-0":"-translate-x-full"}
 
 lg:translate-x-0
 
 `}
+
 >
 
 
 {/* BRAND */}
 
-<div className="flex items-center gap-3 px-6 py-5 border-b border-borderSoft">
+<div className="flex items-center gap-3 px-6 py-5 border-b">
 
 <img
+
 src="/logo.png"
-className="h-8 object-contain"
+
+className="h-8"
+
 />
 
-<span className="font-semibold text-primary text-lg tracking-wide">
+<span className="font-semibold text-[#0F2A44]">
 
-Hilaireofficial
+Hans Admin
 
 </span>
 
 </div>
 
 
-
-{/* NAVIGATION */}
-
 <nav className="flex flex-col gap-2 p-4">
 
-<NavItem href="/admin/dashboard" label="Dashboard" />
+<NavItem href="/admin/dashboard" label="Dashboard"/>
 
-<NavItem href="/admin/categories" label="Categories" />
+<NavItem href="/admin/categories" label="Categories"/>
 
-<NavItem href="/admin/products" label="Products" />
+<NavItem href="/admin/products" label="Products"/>
 
-<NavItem href="/admin/orders" label="Orders" />
+<NavItem href="/admin/orders" label="Orders"/>
 
 
 <button
 
-className="mt-6 px-4 py-2 rounded-lg text-left text-red-500 hover:bg-secondary transition"
+className="mt-6 px-4 py-2 text-left text-red-500 hover:bg-[#FAF8F3] rounded-lg"
 
 >
 
@@ -102,24 +112,19 @@ Logout
 </aside>
 
 
-
-{/* MAIN AREA */}
+{/* MAIN */}
 
 <div className="flex-1 flex flex-col">
 
 
-{/* HEADER */}
+<header className="bg-white border-b px-6 py-4 flex items-center justify-between">
 
-<header className="bg-white border-b border-borderSoft px-6 py-4 flex items-center justify-between">
-
-
-{/* HAMBURGER */}
 
 <button
 
-onClick={() => setOpen(!open)}
+onClick={()=>setOpen(!open)}
 
-className="lg:hidden text-primary text-2xl"
+className="lg:hidden text-[#0F2A44] text-2xl"
 
 >
 
@@ -128,32 +133,14 @@ className="lg:hidden text-primary text-2xl"
 </button>
 
 
-
-{/* HEADER BRAND */}
-
-<div className="flex items-center gap-3">
-
-<img
-
-src="/logo.png"
-
-className="h-7"
-
-/>
-
-<span className="font-semibold text-primary tracking-wide">
+<div className="font-semibold text-[#0F2A44]">
 
 Admin Dashboard
-
-</span>
 
 </div>
 
 </header>
 
-
-
-{/* PAGE CONTENT */}
 
 <main className="p-6 flex-1">
 

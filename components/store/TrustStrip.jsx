@@ -1,31 +1,98 @@
-export default function TrustStrip() {
+"use client";
 
-  const points = [
-    "Trusted by 2,000+ customers",
-    "Dermatologically tested",
-    "Premium quality formula",
-    "Made for Indian skin types",
-  ];
+import {
+ShieldCheck,
+Gem,
+Truck,
+MessageCircle
+} from "lucide-react";
 
-  return (
-    <section className="bg-primary text-white">
+import { motion } from "framer-motion";
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
+export default function TrustStrip(){
 
-        <div className="flex flex-wrap justify-center gap-6 text-sm font-medium">
+const features=[
 
-          {points.map((item) => (
+{
+title:"Hallmarked Gold",
+desc:"Certified purity guarantee",
+icon:<ShieldCheck size={26}/>
+},
 
-            <div key={item} className="flex items-center gap-2">
-              ✔ {item}
-            </div>
+{
+title:"Premium Craftsmanship",
+desc:"Traditional & modern designs",
+icon:<Gem size={26}/>
+},
 
-          ))}
+{
+title:"Safe Delivery",
+desc:"Secure packaging & tracking",
+icon:<Truck size={26}/>
+},
 
-        </div>
+{
+title:"WhatsApp Support",
+desc:"Instant jewelry consultation",
+icon:<MessageCircle size={26}/>
+}
 
-      </div>
+];
 
-    </section>
-  );
+return(
+
+<section className="bg-[#0F2A44] text-white">
+
+<div className="max-w-7xl mx-auto px-6 py-14">
+
+
+<div className="grid grid-cols-2 md:grid-cols-4 gap-10">
+
+
+{features.map((item,index)=>(
+
+<motion.div
+key={index}
+initial={{opacity:0,y:20}}
+whileInView={{opacity:1,y:0}}
+transition={{delay:index*.1}}
+viewport={{once:true}}
+className="text-center space-y-3"
+>
+
+
+<div className="w-12 h-12 mx-auto flex items-center justify-center rounded-full bg-[#D4AF37]/20">
+
+{item.icon}
+
+</div>
+
+
+<h3 className="font-semibold text-sm">
+
+{item.title}
+
+</h3>
+
+
+<p className="text-xs text-white/70">
+
+{item.desc}
+
+</p>
+
+
+</motion.div>
+
+))}
+
+
+</div>
+
+</div>
+
+</section>
+
+);
+
 }

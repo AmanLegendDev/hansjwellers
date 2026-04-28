@@ -29,25 +29,43 @@ shortDescription: data.shortDescription,
 
 description: data.description,
 
-benefits: data.benefits,
+/* JEWELRY FIELDS */
 
-ingredients: data.ingredients,
+weight: data.weight,
 
-howToUse: data.howToUse,
+purity: data.purity,
 
-size: data.size,
+material: data.material,
+
+stoneType: data.stoneType,
+
+makingCharges: data.makingCharges,
+
+deliveryTime: data.deliveryTime,
+
+customizable: data.customizable,
+
+/* PRICE */
 
 price: data.price,
 
+/* MEDIA */
+
 images: data.images,
+
+/* CATEGORY */
 
 category: data.category,
 
-stock: data.stock,
+/* INVENTORY */
 
-isFeatured: data.isFeatured,
+stock: data.stock ?? 0,
 
-isVisible: data.isVisible
+/* FLAGS */
+
+isFeatured: data.isFeatured ?? false,
+
+isVisible: data.isVisible ?? true
 
 });
 
@@ -70,13 +88,18 @@ export async function getFeaturedProducts() {
 
   await connectDB();
 
-  return Product.find({
+  const products = await Product.find({
     isFeatured: true,
     isVisible: true,
   })
-  .select("title price slug images")
-  .limit(4)
-  .lean();
+    .select("title price slug images")
+    .limit(4)
+    .lean();
+
+  return products.map(product => ({
+    ...product,
+    _id: product._id.toString()
+  }));
 
 }
 

@@ -6,8 +6,9 @@ import {
 Menu,
 X,
 ShoppingCart,
-Package,
-ClipboardList
+ClipboardList,
+Search,
+Phone
 } from "lucide-react";
 
 import {
@@ -20,23 +21,23 @@ useCartStore
 } from "@/store/cartStore";
 
 
-export default function Navbar() {
+export default function Navbar(){
 
-const [open, setOpen] = useState(false);
+const [open,setOpen]=useState(false);
 
 const cart = useCartStore(
-state => state.cart
+state=>state.cart
 );
 
 const totalItems = cart.reduce(
-(acc, item) => acc + item.qty,
+(acc,item)=>acc+item.qty,
 0
 );
 
 
-return (
+return(
 
-<nav className="sticky top-0 z-50 bg-secondary/80 backdrop-blur border-b border-neutral-200">
+<nav className="sticky top-0 z-50 backdrop-blur-lg bg-white/80 border-b border-neutral-200 shadow-sm">
 
 <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
 
@@ -45,19 +46,29 @@ return (
 
 <Link
 href="/"
-className="flex items-center gap-2"
+className="flex items-center gap-3"
 >
 
 <img
 src="/logo.png"
-className="h-7"
+className="h-9"
 />
 
-<span className="text-primary text-lg font-semibold tracking-wide">
+<div className="leading-tight">
+
+<p className="text-[#0F2A44] font-heading text-lg tracking-wide">
 
 HANS JWELLERS
 
-</span>
+</p>
+
+<p className="text-[11px] text-[#D4AF37] tracking-widest">
+
+SHIMLA
+
+</p>
+
+</div>
 
 </Link>
 
@@ -65,47 +76,56 @@ HANS JWELLERS
 
 {/* DESKTOP MENU */}
 
-<div className="hidden md:flex gap-8 items-center text-sm font-medium">
+<div className="hidden md:flex items-center gap-8 text-sm font-medium">
 
 
 <Link
 href="/products"
-className="flex items-center gap-1 hover:text-primary transition"
+className="hover:text-[#D4AF37] transition flex items-center gap-1"
 >
-    <Package size={18} />
 
-Products
+<Search size={17}/>
+
+Explore
 
 </Link>
 
 
-{/* ORDER HISTORY BUTTON */}
-
 <Link
 href="/orders"
-className="flex items-center gap-1 hover:text-primary transition"
+className="hover:text-[#D4AF37] transition flex items-center gap-1"
 >
 
-<ClipboardList size={18} />
+<ClipboardList size={17}/>
 
 Orders
 
 </Link>
 
 
+<a
+href="https://wa.me/918219174058"
+target="_blank"
+className="flex items-center gap-1 px-4 py-2 rounded-full border border-[#0F2A44] text-[#0F2A44] hover:bg-[#0F2A44] hover:text-white transition"
+>
 
-{/* CART */}
+<Phone size={16}/>
+
+Consult
+
+</a>
+
 
 <Link
 href="/cart"
-className="relative hover:text-primary transition"
+className="relative hover:text-[#D4AF37] transition"
 >
 
-<ShoppingCart size={20} />
+<ShoppingCart size={20}/>
 
-{totalItems > 0 && (
+{totalItems>0&&(
 
-<span className="absolute -top-2 -right-2 bg-primary text-white text-xs px-1.5 rounded-full">
+<span className="absolute -top-2 -right-2 bg-[#D4AF37] text-white text-xs px-1.5 rounded-full">
 
 {totalItems}
 
@@ -115,6 +135,7 @@ className="relative hover:text-primary transition"
 
 </Link>
 
+
 </div>
 
 
@@ -122,14 +143,13 @@ className="relative hover:text-primary transition"
 {/* MOBILE BUTTON */}
 
 <button
-onClick={() => setOpen(!open)}
+onClick={()=>setOpen(!open)}
 className="md:hidden"
 >
 
-{open ? <X size={22}/> : <Menu size={22}/>}
+{open?<X size={24}/>:<Menu size={24}/>}
 
 </button>
-
 
 </div>
 
@@ -139,66 +159,64 @@ className="md:hidden"
 
 <AnimatePresence>
 
-{open && (
+{open&&(
 
 <motion.div
 
-initial={{ opacity: 0, y: -20 }}
+initial={{opacity:0,y:-20}}
 
-animate={{ opacity: 1, y: 0 }}
+animate={{opacity:1,y:0}}
 
-exit={{ opacity: 0, y: -20 }}
+exit={{opacity:0,y:-20}}
 
-transition={{ duration: 0.2 }}
+transition={{duration:.2}}
 
 className="md:hidden bg-white border-t"
 
 >
 
-<div className="flex flex-col px-6 py-4 gap-4">
+<div className="flex flex-col px-6 py-6 gap-5 text-sm font-medium">
 
 
 <Link
-href="/products" prefetch
-onClick={() => setOpen(false)}
-className="flex items-center gap-2 text-sm font-medium"
+href="/products"
+onClick={()=>setOpen(false)}
+className="flex items-center gap-2"
 >
-    <Package size={18} />
 
-Products
+<Search size={18}/>
+
+Explore Collection
 
 </Link>
 
 
-{/* MOBILE ORDER HISTORY */}
-
 <Link
 href="/orders"
-onClick={() => setOpen(false)}
-className="flex items-center gap-2 text-sm font-medium"
+onClick={()=>setOpen(false)}
+className="flex items-center gap-2"
 >
 
 <ClipboardList size={18}/>
 
-Orders
+Track Orders
 
 </Link>
 
 
-
 <Link
 href="/cart"
-onClick={() => setOpen(false)}
-className="flex items-center gap-2 text-sm font-medium"
+onClick={()=>setOpen(false)}
+className="flex items-center gap-2"
 >
 
 <ShoppingCart size={18}/>
 
 Cart
 
-{totalItems > 0 && (
+{totalItems>0&&(
 
-<span className="bg-primary text-white text-xs px-2 rounded-full">
+<span className="bg-[#D4AF37] text-white text-xs px-2 rounded-full">
 
 {totalItems}
 
@@ -207,6 +225,17 @@ Cart
 )}
 
 </Link>
+
+
+<a
+href="https://wa.me/918219174058"
+target="_blank"
+className="flex items-center justify-center gap-2 bg-[#0F2A44] text-white py-3 rounded-full"
+>
+
+Consult on WhatsApp
+
+</a>
 
 
 </div>

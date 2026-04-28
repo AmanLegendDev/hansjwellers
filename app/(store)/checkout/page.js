@@ -4,288 +4,314 @@ import { useCartStore } from "@/store/cartStore";
 import { useState } from "react";
 import Script from "next/script";
 
-export default function CheckoutPage() {
+export default function CheckoutPage(){
 
-const cart = useCartStore((state) => state.cart);
+const cart = useCartStore(state=>state.cart);
 
 const subtotal = cart.reduce(
-(acc, item) => acc + item.price * item.qty,
+(acc,item)=>acc+item.price*item.qty,
 0
 );
 
-const [form, setForm] = useState({
-name: "",
-phone: "",
-address: "",
-note: ""
+const formatPrice = (price) => {
+return new Intl.NumberFormat("en-IN").format(price);
+};          
+
+const [form,setForm]=useState({
+name:"",
+phone:"",
+address:"",
+note:""
 });
 
-const handleChange = (e) => {
-
-setForm({
-...form,
-[e.target.name]: e.target.value
-});
-
-};
-
+const [confirmPopup,setConfirmPopup]=useState(false);
+const [selectedMethod,setSelectedMethod]=useState(null);
 
 
 /*
-=======================
-ONLINE PAYMENT HANDLER
-=======================
+FORM CHANGE
 */
 
-const handleOrder = async () => {
+const handleChange=(e)=>{
 
-if (!form.name || !form.phone || !form.address) {
-
-alert("Fill required fields");
-
-return;
-
-}
-
-const saveOrder = await fetch("/api/orders/create", {
-
-method: "POST",
-
-headers: {
-"Content-Type": "application/json"
-},
-
-body: JSON.stringify({
-
-customerName: form.name,
-phone: form.phone,
-address: form.address,
-note: form.note,
-items: cart,
-totalAmount: subtotal
-
-})
-
+setForm({
+...form,
+[e.target.name]:e.target.value
 });
-
-const order = await saveOrder.json();
-
-
-const paymentOrder = await fetch("/api/payment/create-order", {
-
-method: "POST",
-
-headers: {
-"Content-Type": "application/json"
-},
-
-body: JSON.stringify({
-amount: subtotal
-})
-
-});
-
-const razorpayOrder = await paymentOrder.json();
-
-
-if (!window.Razorpay) {
-
-alert("Payment SDK not loaded");
-
-return;
-
-}
-
-
-const options = {
-
-key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-
-amount: razorpayOrder.amount,
-
-currency: "INR",
-
-name: "Hilaire Store",
-
-description: "Order Payment",
-
-order_id: razorpayOrder.id,
-
-handler: async function () {
-
-await fetch("/api/orders/update-payment", {
-
-method: "POST",
-
-headers: {
-"Content-Type": "application/json"
-},
-
-body: JSON.stringify({
-orderId: order._id
-})
-
-});
-
-
-const orderData = {
-
-customerName: form.name,
-phone: form.phone,
-address: form.address,
-
-items: cart,
-
-totalAmount: subtotal,
-
-paymentMethod: "Online Payment",
-
-paymentStatus: "paid",
-
-orderStatus: "placed"
-
-};
-
-localStorage.setItem("lastOrder", JSON.stringify(orderData));
-
-window.location.href = "/order-success";
-
-},
-
-prefill: {
-
-name: form.name,
-contact: form.phone
-
-}
 
 };
 
 
-const rzp = new window.Razorpay(options);
+/*
+VALIDATION
+*/
+
+const validateForm=()=>{
+
+if(!form.name||!form.phone||!form.address){
+
+alert("Please fill required fields");
+
+return false;
+
+}
+
+return true;
+
+};
+
+
+/*
+OPEN CONFIRMATION
+*/
+
+const openConfirmation=(method)=>{
+
+if(!validateForm()) return;
+
+setSelectedMethod(method);
+
+setConfirmPopup(true);
+
+};
+
+
+/*
+ONLINE PAYMENT
+*/
+
+const handleOnlinePayment=async()=>{
+
+setConfirmPopup(false);
+
+/*
+CREATE RAZORPAY ORDER
+*/
+
+const paymentOrder=await fetch(
+"/api/payment/create-order",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+amount:subtotal
+})
+}
+);
+
+const razorpayOrder=
+await paymentOrder.json();
+
+
+const options={
+
+key:process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+
+amount:razorpayOrder.amount,
+
+currency:"INR",
+
+name:"Hans Jewellers Shimla",
+
+description:"Jewelry Purchase",
+
+order_id:razorpayOrder.id,
+
+
+handler:async function(){
+
+/*
+CREATE ORDER IN DB
+*/
+
+const res=await fetch(
+"/api/orders/create",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+
+customerName:form.name,
+phone:form.phone,
+address:form.address,
+note:form.note,
+
+items:cart,
+totalAmount:subtotal,
+
+paymentStatus:"paid",
+paymentMethod:"online",
+orderStatus:"placed"
+
+})
+}
+);
+
+const data=await res.json();
+
+
+/*
+SAVE ORDER LOCALLY FOR SUCCESS PAGE
+*/
+
+localStorage.setItem(
+"lastOrder",
+JSON.stringify({
+
+customerName:form.name,
+phone:form.phone,
+address:form.address,
+
+items:cart,
+
+totalAmount:subtotal,
+
+paymentMethod:"online",
+paymentStatus:"paid",
+orderStatus:"placed",
+
+trackingId:data.trackingId
+
+})
+);
+
+window.location.href="/order-success";
+
+}
+
+};
+
+
+const rzp=new window.Razorpay(options);
 
 rzp.open();
 
 };
 
 
-
 /*
-=======================
-COD HANDLER
-=======================
+COD ORDER
 */
 
-const handleCOD = async () => {
+const handleCOD=async()=>{
 
-if (!form.name || !form.phone || !form.address) {
+setConfirmPopup(false);
 
-alert("Fill required fields");
-
-return;
-
-}
-
-await fetch("/api/orders/create", {
-
-method: "POST",
-
-headers: {
-"Content-Type": "application/json"
+const res=await fetch(
+"/api/orders/create",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
 },
+body:JSON.stringify({
 
-body: JSON.stringify({
+customerName:form.name,
+phone:form.phone,
+address:form.address,
+note:form.note,
 
-customerName: form.name,
-phone: form.phone,
-address: form.address,
-note: form.note,
-items: cart,
-totalAmount: subtotal,
-paymentStatus: "cod"
+items:cart,
+totalAmount:subtotal,
+
+paymentStatus:"cod",
+paymentMethod:"cod",
+orderStatus:"placed"
 
 })
+}
+);
 
-});
-
-
-const orderData = {
-
-customerName: form.name,
-phone: form.phone,
-address: form.address,
-
-items: cart,
-
-totalAmount: subtotal,
-
-paymentMethod: "Cash on Delivery",
-
-paymentStatus: "cod",
-
-orderStatus: "placed"
-
-};
-
-localStorage.setItem("lastOrder", JSON.stringify(orderData));
-
-window.location.href = "/order-success";
-
-};
-
+const data=await res.json();
 
 
 /*
-=======================
-WHATSAPP HANDLER
-=======================
+SAVE ORDER FOR SUCCESS PAGE
 */
 
-const handleWhatsApp = () => {
+localStorage.setItem(
+"lastOrder",
+JSON.stringify({
 
-const message = `New Order Request:
+customerName:form.name,
+phone:form.phone,
+address:form.address,
+
+items:cart,
+
+totalAmount:subtotal,
+
+paymentMethod:"cod",
+paymentStatus:"cod",
+orderStatus:"placed",
+
+trackingId:data.trackingId
+
+})
+);
+
+window.location.href="/order-success";
+
+};
+
+
+/*
+WHATSAPP ORDER
+*/
+
+const handleWhatsApp=()=>{
+
+setConfirmPopup(false);
+
+const message=`
+
+New Jewelry Order Request
 
 Name: ${form.name}
+
 Phone: ${form.phone}
+
 Address: ${form.address}
 
 Items:
-${cart.map(item =>
-`${item.title} x ${item.qty}`
+
+${cart.map(
+item=>`${item.title} x ${item.qty}`
 ).join("\n")}
 
-Total: ₹${subtotal}`;
+Total: ₹${subtotal}
+
+`;
 
 window.open(
-
 `https://wa.me/918219174058?text=${encodeURIComponent(message)}`
-
 );
 
 };
 
 
-
-return (
+return(
 
 <>
 
-<Script
-src="https://checkout.razorpay.com/v1/checkout.js"
-strategy="afterInteractive"
-/>
+<Script src="https://checkout.razorpay.com/v1/checkout.js"/>
 
 
-<section className="bg-secondary min-h-screen">
-
-<div className="max-w-6xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-12">
+<section className="bg-white min-h-screen">
 
 
-{/* CUSTOMER FORM */}
+<div className="max-w-6xl mx-auto px-6 py-16 grid md:grid-cols-2 gap-12">
 
-<div className="bg-white rounded-xl shadow-soft p-6">
 
-<h2 className="text-xl font-semibold mb-6">
+{/* FORM */}
+
+<div className="bg-[#FAF8F3] rounded-2xl p-8 shadow-soft">
+
+<h2 className="text-2xl font-heading text-[#0F2A44] mb-6">
 
 Customer Details
 
@@ -295,7 +321,7 @@ Customer Details
 <input
 name="name"
 placeholder="Full Name"
-className="border p-3 w-full mb-4 rounded-lg"
+className="border rounded-lg p-3 w-full mb-4"
 onChange={handleChange}
 />
 
@@ -303,7 +329,7 @@ onChange={handleChange}
 <input
 name="phone"
 placeholder="Phone Number"
-className="border p-3 w-full mb-4 rounded-lg"
+className="border rounded-lg p-3 w-full mb-4"
 onChange={handleChange}
 />
 
@@ -311,38 +337,37 @@ onChange={handleChange}
 <textarea
 name="address"
 placeholder="Full Address"
-className="border p-3 w-full mb-4 rounded-lg"
+className="border rounded-lg p-3 w-full mb-4"
 onChange={handleChange}
 />
 
 
 <textarea
 name="note"
-placeholder="Extra note (optional)"
-className="border p-3 w-full rounded-lg"
+placeholder="Order Note (optional)"
+className="border rounded-lg p-3 w-full"
 onChange={handleChange}
 />
 
 </div>
 
 
+{/* SUMMARY */}
 
-{/* ORDER SUMMARY */}
+<div className="bg-white rounded-2xl shadow-soft p-8">
 
-<div className="bg-white rounded-xl shadow-soft p-6">
-
-<h2 className="text-xl font-semibold mb-6">
+<h2 className="text-2xl font-heading text-[#0F2A44] mb-6">
 
 Order Summary
 
 </h2>
 
 
-{cart.map(item => (
+{cart.map(item=>(
 
 <div
 key={item._id}
-className="flex justify-between mb-3"
+className="flex justify-between mb-3 text-sm"
 >
 
 <span>
@@ -353,8 +378,8 @@ className="flex justify-between mb-3"
 
 <span>
 
-₹{item.price * item.qty}
 
+₹ {formatPrice(item.price*item.qty)}
 </span>
 
 </div>
@@ -369,26 +394,28 @@ className="flex justify-between mb-3"
 
 <span>Total</span>
 
-<span>₹{subtotal}</span>
+<span className="text-[#D4AF37]">
+
+₹ {formatPrice(subtotal)}
+
+</span>
 
 </div>
 
 
-
 <button
-onClick={handleOrder}
-className="bg-primary text-white w-full mt-6 py-3 rounded-lg"
+onClick={()=>openConfirmation("online")}
+className="mt-6 w-full bg-[#0F2A44] text-white py-3 rounded-full"
 >
 
-Pay Online
+Pay Securely Online
 
 </button>
 
 
-
 <button
-onClick={handleCOD}
-className="border border-primary text-primary w-full mt-4 py-3 rounded-lg"
+onClick={()=>openConfirmation("cod")}
+className="mt-4 w-full border border-[#0F2A44] text-[#0F2A44] py-3 rounded-full"
 >
 
 Cash on Delivery
@@ -396,10 +423,9 @@ Cash on Delivery
 </button>
 
 
-
 <button
-onClick={handleWhatsApp}
-className="bg-green-500 text-white w-full mt-4 py-3 rounded-lg"
+onClick={()=>openConfirmation("whatsapp")}
+className="mt-4 w-full bg-green-500 text-white py-3 rounded-full"
 >
 
 Order via WhatsApp
@@ -410,6 +436,69 @@ Order via WhatsApp
 </div>
 
 </div>
+
+
+{/* CONFIRM POPUP */}
+
+{confirmPopup&&(
+
+<div className="fixed inset-0 bg-black/40 flex items-center justify-center">
+
+<div className="bg-white rounded-2xl p-8 w-[320px] text-center">
+
+<h3 className="text-xl font-heading text-[#0F2A44]">
+
+Confirm Order
+
+</h3>
+
+<p className="text-sm mt-2 text-neutral-500">
+
+Proceed with selected payment method?
+
+</p>
+
+
+<button
+
+onClick={
+
+selectedMethod==="online"
+?handleOnlinePayment
+
+:selectedMethod==="cod"
+?handleCOD
+
+:handleWhatsApp
+
+}
+
+className="mt-6 w-full bg-[#0F2A44] text-white py-2 rounded-full"
+
+>
+
+Confirm
+
+</button>
+
+
+<button
+
+onClick={()=>setConfirmPopup(false)}
+
+className="mt-3 text-sm text-neutral-500"
+
+>
+
+Cancel
+
+</button>
+
+</div>
+
+</div>
+
+)}
 
 </section>
 

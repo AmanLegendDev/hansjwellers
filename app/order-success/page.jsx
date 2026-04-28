@@ -1,128 +1,97 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect,useState } from "react";
 import { useCartStore } from "@/store/cartStore";
 
-export default function SuccessPage() {
+export default function SuccessPage(){
 
-const [order, setOrder] = useState(null);
-const resetCart = useCartStore((state) => state.resetCart);
+const [order,setOrder]=useState(null);
+const formatPrice = (price) => {
+return new Intl.NumberFormat("en-IN").format(price);
+};  
 
-useEffect(() => {
+const resetCart =
+useCartStore(state=>state.resetCart);
 
-const storedOrder =
+useEffect(()=>{
+
+const storedOrder=
 localStorage.getItem("lastOrder");
 
-if (storedOrder) {
+if(storedOrder){
 
 setOrder(JSON.parse(storedOrder));
 
-resetCart(); // cart clear here
+resetCart();
 
 }
 
-}, []);
+},[]);
 
+if(!order)
 
+return(
 
-if (!order) {
+<p className="text-center py-24 text-[#0F2A44]">
 
-return (
-
-<p className="text-center py-20">
-
-Loading order details...
+Preparing your confirmation...
 
 </p>
 
 );
 
-}
+return(
 
-
-
-return (
-
-<section className="bg-secondary min-h-screen">
+<section className="bg-white min-h-screen">
 
 <div className="max-w-4xl mx-auto px-6 py-20">
 
-
-{/* SUCCESS HEADER */}
+{/* HEADER */}
 
 <div className="text-center">
 
-<div className="text-6xl">
+<div className="w-20 h-20 mx-auto rounded-full bg-[#D4AF37]/10 flex items-center justify-center text-4xl">
 
-✅
+✓
 
 </div>
 
-<h1 className="text-3xl font-semibold text-primary mt-4">
+<h1 className="text-4xl font-heading text-[#0F2A44] mt-6">
 
-Order Confirmed Successfully
+Order Confirmed
 
 </h1>
 
 <p className="text-neutral-500 mt-2">
 
-Thank you {order.customerName}, your order has been placed successfully.
+Thank you <span className="font-medium">
+
+{order.customerName}
+
+</span>,
+
+your jewelry order has been successfully placed.
 
 </p>
 
 </div>
 
+{/* SUMMARY CARD */}
 
+<div className="bg-[#FAF8F3] rounded-2xl mt-12 p-8 shadow-soft">
 
-{/* CUSTOMER INFO */}
-
-<div className="bg-white shadow-soft rounded-2xl mt-10 p-6">
-
-<h2 className="text-lg font-semibold text-primary mb-4">
-
-Customer Details
-
-</h2>
-
-<p>
-
-Name: {order.customerName}
-
-</p>
-
-<p>
-
-Phone: {order.phone}
-
-</p>
-
-<p>
-
-Address: {order.address}
-
-</p>
-
-</div>
-
-
-
-{/* ORDER SUMMARY */}
-
-<div className="bg-white shadow-soft rounded-2xl mt-10 p-6">
-
-<h2 className="text-lg font-semibold text-primary mb-4">
+<h2 className="text-xl font-heading text-[#0F2A44] mb-6">
 
 Order Summary
 
 </h2>
 
-
-{order.items.map((item, i) => (
+{order.items.map((item,i)=>(
 
 <div
 key={i}
-className="flex justify-between border-b py-2"
+className="flex justify-between py-2 border-b text-sm"
 >
 
 <span>
@@ -132,8 +101,8 @@ className="flex justify-between border-b py-2"
 </span>
 
 <span>
+₹ {formatPrice(item.price*item.qty)}
 
-₹{item.price * item.qty}
 
 </span>
 
@@ -141,14 +110,13 @@ className="flex justify-between border-b py-2"
 
 ))}
 
-
-<div className="flex justify-between mt-4 text-lg font-semibold">
+<div className="flex justify-between mt-6 text-lg font-semibold text-[#0F2A44]">
 
 <span>Total Amount</span>
 
-<span>
+<span className="text-[#D4AF37]">
 
-₹{order.totalAmount}
+₹ {formatPrice(order.totalAmount)}
 
 </span>
 
@@ -156,17 +124,15 @@ className="flex justify-between border-b py-2"
 
 </div>
 
+{/* PAYMENT STATUS */}
 
-
-{/* PAYMENT INFO */}
-
-<div className="bg-white shadow-soft rounded-2xl mt-10 p-6 space-y-4">
+<div className="bg-white rounded-2xl shadow-soft mt-10 p-8 space-y-4">
 
 <div className="flex justify-between">
 
 <span>Payment Method</span>
 
-<span>
+<span className="font-medium">
 
 {order.paymentMethod}
 
@@ -174,12 +140,23 @@ className="flex justify-between border-b py-2"
 
 </div>
 
-
 <div className="flex justify-between">
 
 <span>Payment Status</span>
 
-<span className="text-green-600">
+<span className={
+
+order.paymentStatus==="paid"
+
+? "text-green-600 font-medium"
+
+: order.paymentStatus==="cod"
+
+? "text-blue-600 font-medium"
+
+: "text-yellow-600 font-medium"
+
+}>
 
 {order.paymentStatus}
 
@@ -187,12 +164,11 @@ className="flex justify-between border-b py-2"
 
 </div>
 
-
 <div className="flex justify-between">
 
 <span>Order Status</span>
 
-<span className="text-primary">
+<span className="text-[#0F2A44] font-medium">
 
 {order.orderStatus}
 
@@ -202,13 +178,11 @@ className="flex justify-between border-b py-2"
 
 </div>
 
-
-
 {/* DELIVERY INFO */}
 
-<div className="bg-white shadow-soft rounded-2xl mt-10 p-6">
+<div className="bg-white shadow-soft rounded-2xl mt-10 p-8">
 
-<h2 className="text-lg font-semibold text-primary mb-2">
+<h2 className="text-lg font-heading text-[#0F2A44] mb-2">
 
 Estimated Delivery
 
@@ -216,62 +190,59 @@ Estimated Delivery
 
 <p>
 
-2–5 Working Days
+Your order will be processed within 24 hours
+
+and delivered within
+
+<span className="font-medium">
+
+2–5 working days
+
+</span>
 
 </p>
 
 <p className="mt-2 text-neutral-500 text-sm">
 
-Our team may contact you before dispatch.
+Our team may contact you before dispatch confirmation.
 
 </p>
 
 </div>
 
+{/* SUPPORT CARD */}
 
+<div className="bg-[#FAF8F3] shadow-soft rounded-2xl mt-10 p-8 flex flex-col sm:flex-row justify-between items-center gap-4">
 
-{/* SUPPORT */}
+<div>
 
-<div className="bg-white shadow-soft rounded-2xl mt-10 p-6 flex justify-between items-center">
+<h3 className="font-heading text-[#0F2A44]">
 
-<span>
+Need Help With Your Order?
 
-Need Help?
+</h3>
 
-</span>
+<p className="text-sm text-neutral-500">
+
+Our support team is ready to assist you
+
+</p>
+
+</div>
+
+<div className="flex gap-4">
 
 <a
 
 href="tel:8219174058"
 
-className="text-primary font-semibold"
+className="px-6 py-2 rounded-full border border-[#0F2A44] text-[#0F2A44]"
 
 >
 
-8219174058
+Call Support
 
 </a>
-
-</div>
-
-
-
-{/* CTA */}
-
-<div className="flex flex-wrap gap-4 mt-10 justify-center">
-
-<Link
-
-href="/products"
-
-className="bg-primary text-white px-6 py-3 rounded-lg"
-
->
-
-Continue Shopping
-
-</Link>
-
 
 <a
 
@@ -279,21 +250,46 @@ href="https://wa.me/918219174058"
 
 target="_blank"
 
-className="border border-primary text-primary px-6 py-3 rounded-lg"
+className="px-6 py-2 rounded-full bg-[#0F2A44] text-white"
 
 >
 
-Contact Support
+WhatsApp Support
 
 </a>
 
 </div>
 
+</div>
 
+{/* CTA */}
+
+<div className="flex flex-wrap gap-4 mt-12 justify-center">
+
+<Link
+
+href="/products"
+
+className="px-8 py-3 rounded-full bg-[#0F2A44] text-white"
+
+>
+
+Continue Shopping
+
+</Link>
+
+<Link
+href={`/track-order/${order.trackingId}`}
+className="px-8 py-3 rounded-full border border-[#0F2A44] text-[#0F2A44]"
+>
+Track Your Order
+</Link>
+
+</div>
 
 <p className="text-center text-neutral-400 mt-12 text-sm">
 
-Thank you for shopping with Hilaireofficial 💚
+Thank you for choosing Hans Jewellers Shimla
 
 </p>
 

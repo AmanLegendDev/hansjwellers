@@ -3,16 +3,28 @@ import Product from "@/models/Product";
 
 export async function GET() {
 
-  await connectDB();
+await connectDB();
 
-  const products = await Product.find({
-    isVisible: true
-  })
-  .select("title price slug shortDescription images category")
-  .populate("category", "name")
-  .sort({ createdAt: -1 })
-  .lean();
+const products = await Product.find({
+isVisible: true
+})
+.select(`
+title
+price
+slug
+shortDescription
+images
+category
+weight
+purity
+material
+stoneType
+customizable
+`)
+.populate("category", "name")
+.sort({ createdAt: -1 })
+.lean();
 
-  return Response.json(products);
+return Response.json(products);
 
 }

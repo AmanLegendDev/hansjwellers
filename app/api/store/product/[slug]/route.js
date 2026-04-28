@@ -1,18 +1,30 @@
 import { connectDB } from "@/lib/db";
 import Product from "@/models/Product";
-import Category from "@/models/Category";
 
-export async function GET(request, context) {
+export async function GET(req, context) {
 
-  const params = await context.params;
-  const slug = params.slug;
+await connectDB();
 
-  await connectDB();
+/* NEXT 16 FIX */
 
-  const product = await Product.findOne({
-    slug: slug,
-    isVisible: true,
-  }).populate("category");
+const { slug } = await context.params;
 
-  return Response.json(product);
-} 
+const product = await Product.findOne({
+slug: slug,
+isVisible: true
+})
+.populate("category", "name")
+.lean();
+
+if (!product) {
+
+return Response.json(
+{ error: "Product not found" },
+{ status: 404 }
+);
+
+}
+
+return Response.json(product);
+
+}
