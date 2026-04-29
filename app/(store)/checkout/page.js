@@ -288,7 +288,7 @@ Total: ₹${subtotal}
 `;
 
 window.open(
-`https://wa.me/918219174058?text=${encodeURIComponent(message)}`
+`https://wa.me/919625970888?text=${encodeURIComponent(message)}`
 );
 
 };
@@ -320,6 +320,7 @@ Customer Details
 
 <input
 name="name"
+value={form.name}
 placeholder="Full Name"
 className="border rounded-lg p-3 w-full mb-4"
 onChange={handleChange}
@@ -328,6 +329,7 @@ onChange={handleChange}
 
 <input
 name="phone"
+value={form.phone}
 placeholder="Phone Number"
 className="border rounded-lg p-3 w-full mb-4"
 onChange={handleChange}
@@ -336,6 +338,7 @@ onChange={handleChange}
 
 <textarea
 name="address"
+value={form.address}
 placeholder="Full Address"
 className="border rounded-lg p-3 w-full mb-4"
 onChange={handleChange}
@@ -344,6 +347,7 @@ onChange={handleChange}
 
 <textarea
 name="note"
+value={form.note}
 placeholder="Order Note (optional)"
 className="border rounded-lg p-3 w-full"
 onChange={handleChange}
@@ -405,7 +409,7 @@ className="flex justify-between mb-3 text-sm"
 
 <button
 onClick={()=>openConfirmation("online")}
-className="mt-6 w-full bg-[#0F2A44] text-white py-3 rounded-full"
+className="mt-6 w-full bg-[#0F2A44] text-white py-3 rounded-full cursor-pointer"
 >
 
 Pay Securely Online
@@ -415,7 +419,7 @@ Pay Securely Online
 
 <button
 onClick={()=>openConfirmation("cod")}
-className="mt-4 w-full border border-[#0F2A44] text-[#0F2A44] py-3 rounded-full"
+className="mt-4 w-full border border-[#0F2A44] text-[#0F2A44] py-3 rounded-full cursor-pointer"
 >
 
 Cash on Delivery
@@ -425,7 +429,7 @@ Cash on Delivery
 
 <button
 onClick={()=>openConfirmation("whatsapp")}
-className="mt-4 w-full bg-green-500 text-white py-3 rounded-full"
+className="mt-4 w-full bg-green-500 text-white py-3 rounded-full cursor-pointer"
 >
 
 Order via WhatsApp

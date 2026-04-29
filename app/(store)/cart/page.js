@@ -212,7 +212,7 @@ Proceed to Checkout
 </Link>
 
 <a
-href={`https://wa.me/918219174058?text=Hi I want to order jewelry items worth ₹${subtotal}`}
+href={`https://wa.me/919625970888?text=Hi I want to order jewelry items worth ₹${subtotal}`}
 target="_blank"
 className="mt-4 block text-center border border-[#0F2A44] text-[#0F2A44] py-3 rounded-full hover:bg-[#0F2A44] hover:text-white transition"
 

@@ -233,6 +233,7 @@ onChange={v=>setForm({...form,description:v})}
 />
 
 
+
 <InputField
 label="Weight"
 value={form.weight||""}
@@ -272,6 +273,13 @@ onChange={v=>setForm({...form,makingCharges:v})}
 label="Delivery Time"
 value={form.deliveryTime||""}
 onChange={v=>setForm({...form,deliveryTime:v})}
+/>
+
+<InputField
+label="Price"
+value={form.price || ""}
+onChange={v => setForm({ ...form, price: v })}
+type="number"
 />
 
 
@@ -389,7 +397,7 @@ onChange={v=>setForm({...form,isVisible:v})}
 
 <button
 
-className="bg-primary text-white px-6 py-3 rounded-lg w-full hover:bg-[#0c2135] transition"
+className="bg-primary text-white px-6 py-3 rounded-lg w-full bg-[#0c2135] hover:bg-[#173246] transition"
 
 >
 

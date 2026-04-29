@@ -154,11 +154,60 @@ export async function getSingleProduct(id) {
 }
 
 export async function updateProduct(id, data) {
-  await connectDB();
 
-  await Product.findByIdAndUpdate(id, data, {
-    new: true,
-  });
+await connectDB();
 
-  return { success: true };
+const existingProduct =
+await Product.findById(id);
+
+if (!existingProduct) {
+
+return { error: "Product not found" };
+
+}
+
+await Product.findByIdAndUpdate(id, {
+
+title: data.title,
+
+slug: slugify(data.title, { lower: true }),
+
+shortDescription: data.shortDescription,
+
+description: data.description,
+
+weight: data.weight,
+
+purity: data.purity,
+
+material: data.material,
+
+stoneType: data.stoneType,
+
+makingCharges: data.makingCharges,
+
+deliveryTime: data.deliveryTime,
+
+customizable: data.customizable,
+
+price: Number(data.price),
+
+category: data.category,
+
+stock: data.stock ?? existingProduct.stock,
+
+isFeatured: data.isFeatured ?? false,
+
+isVisible: data.isVisible ?? true,
+
+images:
+Array.isArray(data.images) &&
+data.images.length > 0
+? data.images
+: existingProduct.images
+
+});
+
+return { success: true };
+
 }

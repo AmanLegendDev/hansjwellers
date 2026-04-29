@@ -23,11 +23,41 @@ new Intl.NumberFormat("en-IN").format(price);
 
 useEffect(()=>{
 
+const fetchOrder=()=>{
+
 fetch(`/api/orders/track/${params.trackingId}`)
 .then(res=>res.json())
-.then(setOrder);
+.then(data=>{
 
-},[]);
+if(data?.order){
+
+setOrder(data.order);
+
+}else{
+
+setOrder(data);
+
+}
+
+});
+
+};
+
+fetchOrder();
+
+/*
+Polling every 5 seconds
+*/
+
+const interval=setInterval(fetchOrder,5000);
+
+/*
+Cleanup when page closes
+*/
+
+return()=>clearInterval(interval);
+
+},[params.trackingId]);
 
 
 if(!order)
@@ -198,7 +228,7 @@ Contact showroom anytime for delivery support
 <div className="flex flex-col sm:flex-row justify-center gap-4 mt-6">
 
 <a
-href="https://wa.me/918219174058"
+href="https://wa.me/919625970888"
 target="_blank"
 className="px-7 py-3 rounded-full bg-[#0F2A44] text-white hover:scale-[1.04] transition"
 >

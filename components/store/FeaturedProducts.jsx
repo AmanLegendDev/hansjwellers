@@ -97,7 +97,7 @@ Featured
 {/* QUICK WHATSAPP CTA */}
 
 <a
-href={`https://wa.me/918219174058?text=Hi%20I%20am%20interested%20in%20${product.title}`}
+href={`https://wa.me/919625970888?text=Hi%20I%20am%20interested%20in%20${product.title}`}
 target="_blank"
 className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-[#0F2A44] text-white text-xs px-5 py-2 rounded-full opacity-0 group-hover:opacity-100 transition duration-300"
 >

@@ -357,7 +357,7 @@ Add to Cart
 
 <a
 
-href={`https://wa.me/918219174058?text=Hi I want to enquire about ${product.title}`}
+href={`https://wa.me/919625970888?text=Hi I want to enquire about ${product.title}`}
 
 target="_blank"
 
@@ -538,7 +538,7 @@ Add to Cart
 
 <a
 
-href={`https://wa.me/918219174058?text=Hi I want to enquire about ${product.title}`}
+href={`https://wa.me/919625970888?text=Hi I want to enquire about ${product.title}`}
 
 target="_blank"
 

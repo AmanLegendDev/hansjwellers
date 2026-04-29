@@ -234,7 +234,7 @@ Our support team is ready to assist you
 
 <a
 
-href="tel:8219174058"
+href="tel:9625970888"
 
 className="px-6 py-2 rounded-full border border-[#0F2A44] text-[#0F2A44]"
 
@@ -246,7 +246,7 @@ Call Support
 
 <a
 
-href="https://wa.me/918219174058"
+href="https://wa.me/919625970888"
 
 target="_blank"
 
