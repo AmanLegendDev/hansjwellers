@@ -58,7 +58,7 @@ className="h-9"
 
 <p className="text-[#0F2A44] font-heading text-lg tracking-wide">
 
-HANS JWELLERS
+HANS JEWELLERS
 
 </p>
 
