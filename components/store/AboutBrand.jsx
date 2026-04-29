@@ -127,7 +127,7 @@ comfortable and reliable purchase experience.
 <div className="flex flex-wrap gap-4 mt-8">
 
 <a
-href="https://wa.me/918219174058"
+href="https://wa.me/918219174058?text=Hello%20Hans%20Jewellers%20Shimla,%20I%20would%20like%20to%20visit%20your%20showroom%20and%20explore%20your%20jewellery%20collection.%20Please%20guide%20me%20with%20store%20timings%20and%20available%20designs."
 target="_blank"
 className="px-7 py-3 bg-[#0F2A44] text-white rounded-full shadow-xl hover:scale-[1.05] transition"
 >

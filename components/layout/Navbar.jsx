@@ -104,7 +104,7 @@ Orders
 
 
 <a
-href="https://wa.me/918219174058"
+href="https://wa.me/919625970888?text=Hello%20Hans%20Jewellers%20Shimla,%20I%20would%20like%20consultation%20regarding%20jewellery%20designs.%20Please%20assist%20me."
 target="_blank"
 className="flex items-center gap-1 px-4 py-2 rounded-full border border-[#0F2A44] text-[#0F2A44] hover:bg-[#0F2A44] hover:text-white transition"
 >

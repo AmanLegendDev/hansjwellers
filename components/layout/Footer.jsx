@@ -127,7 +127,7 @@ Facebook
 </a>
 
 <a
-href="https://wa.me/918219174058"
+href="https://wa.me/918219174058?text=Hello%20Hans%20Jewellers%20Shimla,%20I%20am%20contacting%20you%20through%20your%20website%20regarding%20jewellery%20enquiry.%20Please%20assist%20me%20with%20details."
 target="_blank"
 className="text-white/70 hover:text-white"
 >

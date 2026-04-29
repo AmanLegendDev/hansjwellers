@@ -154,13 +154,11 @@ Explore Collection
 
 
 <a
-href="https://wa.me/918219174058"
+href="https://wa.me/919625970888?text=Hello%20Hans%20Jewellers%20Shimla,%20I%20am%20visiting%20your%20website%20and%20would%20like%20consultation%20regarding%20jewellery%20designs.%20Please%20guide%20me%20with%20available%20options%20and%20pricing."
 target="_blank"
 className="border border-white text-white px-8 py-3 rounded-full hover:bg-white hover:text-[#0F2A44] transition"
 >
-
 WhatsApp Consultation
-
 </a>
 
 
